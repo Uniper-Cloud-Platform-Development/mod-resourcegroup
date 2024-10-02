@@ -39,7 +39,7 @@ resource "random_integer" "region_index" {
 }
 
 module "resource_group" {
-  source   = "../.."
+  source   = "../../"
   location = module.regions.regions[random_integer.region_index.result].name
   name     = module.naming.resource_group.name_unique
 }
