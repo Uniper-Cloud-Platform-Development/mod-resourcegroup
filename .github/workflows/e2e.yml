@@ -59,6 +59,21 @@
         #     sudo apt-add-repository --yes --update ppa:ansible/ansible
         #     sudo apt-get update -y
         #     sudo apt-get install -y terraform
+        - name: Set up Terraform on Windows
+          run: |
+            # Install Chocolatey if not already installed
+            Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
+            if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
+              [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
+              iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+            }
+
+            # Install Terraform using Chocolatey
+            choco install terraform -y
+
+            # Verify the installation
+            terraform -version
+          shell: powershell
   
         - name: Initialize Terraform for example
           run: |
