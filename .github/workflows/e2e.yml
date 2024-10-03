@@ -75,23 +75,40 @@
             terraform -version
           shell: powershell
         
-          # Force reinstall Git to ensure it is correctly added to PATH
-        - name: Force Reinstall Git on Windows
+        # Uninstall any existing Git packages
+        - name: Uninstall Existing Git Packages
           run: |
             Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
-            choco install git -y --force --params "/GitAndUnixToolsOnPath"
+            choco uninstall git.install -y || echo "No previous installation of git.install found."
+            choco uninstall git -y || echo "No previous installation of git found."
+          shell: powershell
+
+        # Remove any residual Git files
+        - name: Remove Git Residual Files
+          run: |
+            Remove-Item -Path "C:\Program Files\Git" -Recurse -Force -ErrorAction SilentlyContinue
+            Remove-Item -Path "C:\Program Files (x86)\Git" -Recurse -Force -ErrorAction SilentlyContinue
+            Remove-Item -Path "C:\ProgramData\chocolatey\lib\git*" -Recurse -Force -ErrorAction SilentlyContinue
+          shell: powershell
+
+        # Install Git using Chocolatey without `git.install`
+        - name: Install Git Using Chocolatey
+          run: |
+            Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
+            choco install git -y --params "/GitAndUnixToolsOnPath"
             git --version
           shell: powershell
 
-        # Manually add Git to PATH if still not recognized
-        - name: Manually Add Git to PATH
+        # If Chocolatey fails, manually install Git as a fallback
+        - name: Install Git Manually (Fallback)
+          if: failure()
           run: |
-            $gitPath = "C:\Program Files\Git\bin"
-            if (Test-Path $gitPath) {
-              [System.Environment]::SetEnvironmentVariable("PATH", $env:PATH + ";" + $gitPath, [System.EnvironmentVariableTarget]::Process)
-            }
+            Invoke-WebRequest -Uri https://github.com/git-for-windows/git/releases/download/v2.46.2.windows.1/Git-2.46.2-64-bit.exe -OutFile C:\git-installer.exe
+            Start-Process -FilePath "C:\git-installer.exe" -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/NOCANCEL", "/SP-" -NoNewWindow -Wait
+            $env:PATH += ";C:\Program Files\Git\bin"
             git --version
           shell: powershell
+
              
         
   
