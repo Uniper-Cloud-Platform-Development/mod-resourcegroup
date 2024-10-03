@@ -74,6 +74,18 @@
             # Verify the installation
             terraform -version
           shell: powershell
+        
+        - name: Install Git on Windows
+          run: |
+            Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
+            if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+              [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
+              iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+            }
+            choco install git -y
+            git --version
+          shell: powershell
+        
   
         - name: Initialize Terraform for example
           run: |
