@@ -75,15 +75,13 @@
             terraform -version
           shell: powershell
         
-        - name: Manually Add Git to PATH
+        - name: Force Reinstall Git on Windows
           run: |
-            # Locate the Git executable directory
-            $gitPath = "C:\Program Files\Git\bin"
-            if (Test-Path $gitPath) {
-              [System.Environment]::SetEnvironmentVariable("PATH", $env:PATH + ";" + $gitPath, [System.EnvironmentVariableTarget]::Process)
-            }
+            Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
+            choco install git -y --force --params "/GitAndUnixToolsOnPath"
             git --version
-          shell: powershell      
+          shell: powershell
+             
         
   
         - name: Initialize Terraform for example
