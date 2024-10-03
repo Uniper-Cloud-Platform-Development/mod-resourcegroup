@@ -45,11 +45,14 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4.1.7
-
-      # Debug: Print out the value of the matrix variable
+        
       - name: Print Example Path
-        run: echo "Matrix Example Path: ${{ matrix.example }}"
+        run: |
+          echo "Matrix Example Path: %example_path%"
         shell: cmd
+        env:
+          example_path: ${{ matrix.example }}
+      
 
       # Debug: Verify if the working directory exists
       - name: Check Directory Exists
