@@ -75,50 +75,26 @@
             terraform -version
           shell: powershell      
 
-        # Corrected uninstall step for PowerShell
         - name: Uninstall Existing Git Packages
           run: |
             Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
-            try {
-              choco uninstall git.install -y -r
-              Write-Output "Successfully uninstalled git.install."
-            } catch {
-              Write-Output "No previous installation of git.install found."
-            }
-            try {
-              choco uninstall git -y -r
-              Write-Output "Successfully uninstalled git."
-            } catch {
-              Write-Output "No previous installation of git found."
-            }
+            choco uninstall git.install -y --remove-dependencies || Write-Output "No previous installation of git.install found."
+            choco uninstall git -y --remove-dependencies || Write-Output "No previous installation of git found."
           shell: powershell
-
-        # Remove any residual Git files
-        - name: Remove Git Residual Files
+        
+        - name: Remove Any Residual Git Files
           run: |
             Remove-Item -Path "C:\Program Files\Git" -Recurse -Force -ErrorAction SilentlyContinue
             Remove-Item -Path "C:\Program Files (x86)\Git" -Recurse -Force -ErrorAction SilentlyContinue
             Remove-Item -Path "C:\ProgramData\chocolatey\lib\git*" -Recurse -Force -ErrorAction SilentlyContinue
           shell: powershell
-
-        # Install Git using Chocolatey without `git.install`
-        - name: Install Git Using Chocolatey
+        
+        - name: Install Git Using Only the `git` Package
           run: |
             Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
             choco install git -y --params "/GitAndUnixToolsOnPath"
             git --version
           shell: powershell
-
-        # If Chocolatey fails, manually install Git as a fallback
-        - name: Install Git Manually (Fallback)
-          if: failure()
-          run: |
-            Invoke-WebRequest -Uri https://github.com/git-for-windows/git/releases/download/v2.46.2.windows.1/Git-2.46.2-64-bit.exe -OutFile C:\git-installer.exe
-            Start-Process -FilePath "C:\git-installer.exe" -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/NOCANCEL", "/SP-" -NoNewWindow -Wait
-            $env:PATH += ";C:\Program Files\Git\bin"
-            git --version
-          shell: powershell
-             
         
   
         - name: Initialize Terraform for example
