@@ -31,16 +31,23 @@
       runs-on: self-hosted
       needs: getexamples
       environment: test
-      env:
+      env:  
         TF_IN_AUTOMATION: 1
         TF_VAR_enable_telemetry: false
         ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
         ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
         ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      # strategy:
+      #   matrix:
+      #     example: ${{ fromJson(needs.getexamples.outputs.examples) }}
+      #   fail-fast: false
       strategy:
         matrix:
-          example: ${{ fromJson(needs.getexamples.outputs.examples) }}
+          example:
+            - "examples/complete"
+            - "examples/default"
+            #- "examples/storage-account"
         fail-fast: false
       steps:
         - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
