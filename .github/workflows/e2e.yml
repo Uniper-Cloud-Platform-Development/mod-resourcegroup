@@ -74,29 +74,74 @@
             # Verify the installation
             terraform -version
           shell: powershell      
+        # Uninstall any existing Git packages
         - name: Uninstall Existing Git Packages
           run: |
             Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
-        
-            # Attempt to uninstall git.install and handle errors
             try {
               choco uninstall git.install -y --remove-dependencies
               Write-Output "Successfully uninstalled git.install."
             } catch {
-              Write-Output "No previous installation of git.install found or error during uninstall."
+              Write-Output "git.install not found or error during uninstall."
             }
-        
-            # Attempt to uninstall git and handle errors
+
             try {
               choco uninstall git -y --remove-dependencies
               Write-Output "Successfully uninstalled git."
             } catch {
-              Write-Output "No previous installation of git found or error during uninstall."
+              Write-Output "No previous installation of git found."
             }
           shell: powershell
-        
 
-        
+        # Remove any residual Git files to avoid conflicts
+        - name: Remove Any Residual Git Files
+          run: |
+            Remove-Item -Path "C:\Program Files\Git" -Recurse -Force -ErrorAction SilentlyContinue
+            Remove-Item -Path "C:\Program Files (x86)\Git" -Recurse -Force -ErrorAction SilentlyContinue
+            Remove-Item -Path "C:\ProgramData\chocolatey\lib\git*" -Recurse -Force -ErrorAction SilentlyContinue
+          shell: powershell
+
+        # Install Git using only the `git` package without `git.install`
+        - name: Install Git Using Only the `git` Package
+          run: |
+            Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
+            choco install git -y --params "/GitAndUnixToolsOnPath"
+          shell: powershell
+
+        # Verify Git installation and manually add to PATH if needed
+        - name: Verify Git Installation and PATH
+          run: |
+            if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+              Write-Output "Git is not found on PATH. Adding manually..."
+              $gitPath = "C:\Program Files\Git\bin"
+              if (Test-Path $gitPath) {
+                [System.Environment]::SetEnvironmentVariable("PATH", $env:PATH + ";" + $gitPath, [System.EnvironmentVariableTarget]::Process)
+                Write-Output "Manually added Git to PATH."
+              } else {
+                Write-Output "Git executable not found at the expected location."
+                exit 1
+              }
+            } else {
+              Write-Output "Git is correctly installed."
+            }
+            git --version
+          shell: powershell
+
+        # If Git is still not found, manually install Git
+        - name: Manually Install Git as Fallback
+          if: failure()
+          run: |
+            Invoke-WebRequest -Uri https://github.com/git-for-windows/git/releases/download/v2.46.2.windows.1/Git-2.46.2-64-bit.exe -OutFile C:\git-installer.exe
+            Start-Process -FilePath "C:\git-installer.exe" -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/NOCANCEL", "/SP-" -NoNewWindow -Wait
+            $gitPath = "C:\Program Files\Git\bin"
+            if (Test-Path $gitPath) {
+              [System.Environment]::SetEnvironmentVariable("PATH", $env:PATH + ";" + $gitPath, [System.EnvironmentVariableTarget]::Process)
+              Write-Output "Manually added Git to PATH."
+            }
+            git --version
+          shell: powershell      
+
+          
   
         - name: Initialize Terraform for example
           run: |
