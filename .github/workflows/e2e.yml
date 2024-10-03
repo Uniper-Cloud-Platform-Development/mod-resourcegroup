@@ -1,90 +1,177 @@
----
-  name: e2e test
+name: e2e test
+
+on:
+  pull_request:
+    types: ['opened', 'reopened', 'synchronize']
+  merge_group:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  getexamples:
+    if: github.event.repository.name != 'terraform-azurerm-avm-template'
+    runs-on: self-hosted 
+    outputs:
+      examples: ${{ steps.getexamples.outputs.examples }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4.1.7
+
+      - name: Get examples
+        id: getexamples
+        uses: Azure/terraform-azurerm-avm-template/.github/actions/e2e-getexamples@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  testexamples:
+    if: github.event.repository.name != 'terraform-azurerm-avm-template'
+    runs-on: windows-latest
+    needs: getexamples
+    environment: test
+    env:
+      TF_IN_AUTOMATION: 1
+      TF_VAR_enable_telemetry: false
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+    strategy:
+      matrix:
+        example: ${{ fromJson(needs.getexamples.outputs.examples) }}
+      fail-fast: false
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4.1.7
+
+      - name: Set up Terraform on Windows
+        shell: pwsh
+        run: |
+          choco install terraform -y
+        continue-on-error: true
+
+      - name: Initialize Terraform for example
+        shell: pwsh
+        run: terraform init -reconfigure
+        working-directory: ${{ matrix.example }}
+
+      - name: Validate Terraform example
+        shell: pwsh
+        run: terraform validate
+        working-directory: ${{ matrix.example }}
+
+      - name: Plan Terraform example
+        shell: pwsh
+        run: terraform plan -input=false -out=tfplan
+        working-directory: ${{ matrix.example }}
+
+      - name: Apply Terraform example
+        shell: pwsh
+        run: terraform apply -input=false tfplan
+        working-directory: ${{ matrix.example }}
+
+      - name: Destroy Terraform example
+        if: always()
+        shell: pwsh
+        run: terraform destroy -auto-approve
+        working-directory: ${{ matrix.example }}
+
+  testexamplescomplete:
+    if: github.event.repository.name != 'terraform-azurerm-avm-template'
+    runs-on: windows-latest
+    needs: testexamples
+    steps:
+      - run: echo "All tests passed"
+
+# # ---
+#   name: e2e test
   
-  on:
-    pull_request:
-      types: ['opened', 'reopened', 'synchronize']
-    merge_group:
-    workflow_dispatch:
+#   on:
+#     pull_request:
+#       types: ['opened', 'reopened', 'synchronize']
+#     merge_group:
+#     workflow_dispatch:
   
-  permissions:
-    contents: read
-    id-token: write
+#   permissions:
+#     contents: read
+#     id-token: write
   
-  jobs:
-    getexamples:
-      if: github.event.repository.name != 'terraform-azurerm-avm-template'
-      runs-on: ubuntu-latest
-      outputs:
-        examples: ${{ steps.getexamples.outputs.examples }}
-      steps:
-        - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
-        - name: get examples
-          id: getexamples
-          uses: Azure/terraform-azurerm-avm-template/.github/actions/e2e-getexamples@main
-          with:
-            github-token: ${{ secrets.GITHUB_TOKEN }}
+#   jobs:
+#     getexamples:
+#       if: github.event.repository.name != 'terraform-azurerm-avm-template'
+#       runs-on: ubuntu-latest
+#       outputs:
+#         examples: ${{ steps.getexamples.outputs.examples }}
+#       steps:
+#         - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
+#         - name: get examples
+#           id: getexamples
+#           uses: Azure/terraform-azurerm-avm-template/.github/actions/e2e-getexamples@main
+#           with:
+#             github-token: ${{ secrets.GITHUB_TOKEN }}
   
-    testexamples:
-      if: github.event.repository.name != 'terraform-azurerm-avm-template'
-      #runs-on: [ self-hosted, 1ES.Pool=ff314ac9fce031b9e7f5dde283f515666e148ae7 ]
-      runs-on: [ self-hosted, Linux ]
-      needs: getexamples
-      environment: test
-      env:
-        TF_IN_AUTOMATION: 1
-        TF_VAR_enable_telemetry: false
-        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-      strategy:
-        matrix:
-          example: ${{ fromJson(needs.getexamples.outputs.examples) }}
-        fail-fast: false
-      steps:
-        - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
+#     testexamples:
+#       if: github.event.repository.name != 'terraform-azurerm-avm-template'
+#       #runs-on: [ self-hosted, 1ES.Pool=ff314ac9fce031b9e7f5dde283f515666e148ae7 ]
+#       runs-on: [ self-hosted, Linux ]
+#       needs: getexamples
+#       environment: test
+#       env:
+#         TF_IN_AUTOMATION: 1
+#         TF_VAR_enable_telemetry: false
+#         ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+#         ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+#         ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+#         ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+#       strategy:
+#         matrix:
+#           example: ${{ fromJson(needs.getexamples.outputs.examples) }}
+#         fail-fast: false
+#       steps:
+#         - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
   
-        # - name: Set up Terraform
-        #   run: |
-        #     sudo apt-get update -y
-        #     sudo apt-get install -y software-properties-common
-        #     sudo apt-add-repository --yes --update ppa:ansible/ansible
-        #     sudo apt-get update -y
-        #     sudo apt-get install -y terraform
+#         # - name: Set up Terraform
+#         #   run: |
+#         #     sudo apt-get update -y
+#         #     sudo apt-get install -y software-properties-common
+#         #     sudo apt-add-repository --yes --update ppa:ansible/ansible
+#         #     sudo apt-get update -y
+#         #     sudo apt-get install -y terraform
   
-        - name: Initialize Terraform for example
-          run: |
-            terraform init -backend=false -reconfigure
-          working-directory: ${{ matrix.example }}
+#         - name: Initialize Terraform for example
+#           run: |
+#             terraform init -backend=false -reconfigure
+#           working-directory: ${{ matrix.example }}
   
-        - name: Validate Terraform example
-          run: |
-            terraform validate
-          working-directory: ${{ matrix.example }}
+#         - name: Validate Terraform example
+#           run: |
+#             terraform validate
+#           working-directory: ${{ matrix.example }}
   
-        - name: Plan Terraform example
-          run: |
-            terraform plan -input=false -out=tfplan
-          working-directory: ${{ matrix.example }}
+#         - name: Plan Terraform example
+#           run: |
+#             terraform plan -input=false -out=tfplan
+#           working-directory: ${{ matrix.example }}
   
-        - name: Apply Terraform example
-          run: |
-            terraform apply -input=false tfplan
-          working-directory: ${{ matrix.example }}
+#         - name: Apply Terraform example
+#           run: |
+#             terraform apply -input=false tfplan
+#           working-directory: ${{ matrix.example }}
   
-        - name: Destroy Terraform example
-          if: always()
-          run: |
-            terraform destroy -auto-approve
-          working-directory: ${{ matrix.example }}
+#         - name: Destroy Terraform example
+#           if: always()
+#           run: |
+#             terraform destroy -auto-approve
+#           working-directory: ${{ matrix.example }}
   
-    testexamplescomplete:
-      if: github.event.repository.name != 'terraform-azurerm-avm-template'
-      runs-on: ubuntu-latest
-      needs: testexamples
-      steps:
-        - run: echo "All tests passed"
+#     testexamplescomplete:
+#       if: github.event.repository.name != 'terraform-azurerm-avm-template'
+#       runs-on: ubuntu-latest
+#       needs: testexamples
+#       steps:
+#         - run: echo "All tests passed"
   
 
 
