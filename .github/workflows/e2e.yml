@@ -75,12 +75,17 @@
             terraform -version
           shell: powershell
         
-        - name: Force Reinstall Git on Windows
+        - name: Run Git from Installed Location
           run: |
-            Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
-            choco install git -y --force --params "/GitAndUnixToolsOnPath"
-            git --version
+            $gitExecutable = "C:\Program Files\Git\bin\git.exe"
+            if (Test-Path $gitExecutable) {
+              & $gitExecutable --version
+            } else {
+              Write-Output "Git executable not found at the expected location."
+              exit 1
+            }
           shell: powershell
+        
              
         
   
