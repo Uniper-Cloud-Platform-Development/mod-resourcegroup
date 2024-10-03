@@ -28,7 +28,7 @@ jobs:
 
   testexamples:
     if: github.event.repository.name != 'terraform-azurerm-avm-template'
-    runs-on: windows-latest
+    runs-on: self-hosted
     needs: getexamples
     environment: test
     env:
@@ -45,6 +45,22 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4.1.7
+
+      # Debug: Print out the value of the matrix variable
+      - name: Print Example Path
+        run: echo "Matrix Example Path: ${{ matrix.example }}"
+        shell: cmd
+
+      # Debug: Verify if the working directory exists
+      - name: Check Directory Exists
+        shell: cmd
+        run: |
+          if exist "${{ matrix.example }}" (
+            echo "Directory exists: ${{ matrix.example }}"
+          ) else (
+            echo "Directory does not exist: ${{ matrix.example }}"
+            exit 1
+          )
 
       - name: Set up Terraform on Windows
         shell: powershell
