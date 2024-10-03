@@ -13,7 +13,7 @@ permissions:
 jobs:
   getexamples:
     if: github.event.repository.name != 'terraform-azurerm-avm-template'
-    runs-on: self-hosted 
+    runs-on: ubuntu-latest
     outputs:
       examples: ${{ steps.getexamples.outputs.examples }}
     steps:
