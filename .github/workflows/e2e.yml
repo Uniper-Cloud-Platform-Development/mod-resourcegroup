@@ -75,17 +75,15 @@
             terraform -version
           shell: powershell
         
-        - name: Install Git Using Chocolatey (Without git.install)
+        - name: Manually Add Git to PATH
           run: |
-            Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
-            if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
-              [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
-              iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+            # Locate the Git executable directory
+            $gitPath = "C:\Program Files\Git\bin"
+            if (Test-Path $gitPath) {
+              [System.Environment]::SetEnvironmentVariable("PATH", $env:PATH + ";" + $gitPath, [System.EnvironmentVariableTarget]::Process)
             }
-            choco install git -y --no-progress
             git --version
-          shell: powershell
-        
+          shell: powershell      
         
   
         - name: Initialize Terraform for example
