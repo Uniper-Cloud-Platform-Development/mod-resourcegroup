@@ -53,7 +53,7 @@
             #$gitInstallerUrl = "https://github.com/git-for-windows/git/releases/download/v2.40.1.windows.1/Git-2.40.1-64-bit.exe"
             
             # Define the path to save the installer
-            $installerPath = "c:\temp\Git-2.40.1-64-bit.exe"
+            $installerPath = "C:\Temp\Git-2.40.1-64-bit.exe"
             
             # Download the Git installer
             #Write-Output "Downloading Git installer from: $gitInstallerUrl"
