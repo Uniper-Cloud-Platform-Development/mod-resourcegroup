@@ -46,35 +46,21 @@
       steps:
         - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
   
-        # Install Git on Windows before running Terraform commands
+         # Install Git on Windows
         - name: Install Git on Windows
           run: |
-            # Define the URL of the Git installer
-            #$gitInstallerUrl = "https://github.com/git-for-windows/git/releases/download/v2.40.1.windows.1/Git-2.40.1-64-bit.exe"
-            
-            # Define the path to save the installer
-            $installerPath = "C:\Temp\Git-2.40.1-64-bit.exe"
-            
-            # Download the Git installer
-            #Write-Output "Downloading Git installer from: $gitInstallerUrl"
-            #Invoke-WebRequest -Uri $gitInstallerUrl -OutFile $installerPath -UseBasicParsing
-  
-            # Run the installer silently
-            Write-Output "Installing Git silently..."
-            Start-Process -FilePath $installerPath -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART" -NoNewWindow -Wait
-  
-            # Verify Git installation
-            if (Get-Command git -ErrorAction SilentlyContinue) {
-              Write-Output "Git installation successful!"
-              git --version
-            } else {
-              Write-Output "Git installation failed or Git is not in PATH."
-              exit 1
-            }
-  
-            # Remove the installer after installation
-            Write-Output "Cleaning up the installer..."
-            Remove-Item -Path $installerPath -Force
+           # Define the URL of the Git installer
+           $gitInstallerUrl = "https://github.com/git-for-windows/git/releases/download/v2.40.1.windows.1/Git-2.40.1-64-bit.exe"
+           
+           # Define the path to save the installer
+           $installerPath = "C:\Temp\Git-2.40.1-64-bit.exe"
+           
+           # Download and install Git silently
+           Write-Output "Downloading Git installer from: $gitInstallerUrl"
+           Invoke-WebRequest -Uri $gitInstallerUrl -OutFile $installerPath -UseBasicParsing
+           
+           Start-Process -FilePath $installerPath -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART" -NoNewWindow -Wait
+           Remove-Item -Path $installerPath -Force
           shell: powershell
   
         # Set up Terraform on Windows
