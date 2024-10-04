@@ -73,7 +73,70 @@
 
             # Verify the installation
             terraform -version
-          shell: powershell      
+          shell: powershell
+        
+        # Step 1: Completely Remove Any Existing Git Installation
+        - name: Clean Up All Existing Git Installations
+          run: |
+            Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
+            Write-Output "Uninstalling any existing Git packages..."
+            
+            try {
+              choco uninstall git.install -y --remove-dependencies
+              Write-Output "Successfully uninstalled git.install."
+            } catch {
+              Write-Output "No git.install package found."
+            }
+
+            try {
+              choco uninstall git -y --remove-dependencies
+              Write-Output "Successfully uninstalled git."
+            } catch {
+              Write-Output "No git package found."
+            }
+
+            # Manually clean up any residual Git files to avoid conflicts
+            Remove-Item -Path "C:\Program Files\Git" -Recurse -Force -ErrorAction SilentlyContinue
+            Remove-Item -Path "C:\Program Files (x86)\Git" -Recurse -Force -ErrorAction SilentlyContinue
+            Remove-Item -Path "C:\ProgramData\chocolatey\lib\git*" -Recurse -Force -ErrorAction SilentlyContinue
+            Remove-Item -Path "C:\ProgramData\chocolatey\bin\git*" -Recurse -Force -ErrorAction SilentlyContinue
+            Write-Output "Removed all Git residual files."
+          shell: powershell
+
+        # Step 2: Install Git Using Chocolatey (Only `git` Package)
+        - name: Install Git Using Chocolatey
+          run: |
+            Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
+            Write-Output "Installing Git using Chocolatey..."
+            choco install git -y --params "/GitAndUnixToolsOnPath"
+          shell: powershell
+
+        # Step 3: Manually Verify Git Installation and Add to PATH
+        - name: Verify Git Installation and Manually Add to PATH
+          run: |
+            if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+              Write-Output "Git not found on PATH. Attempting to add it manually..."
+              $gitPath = "C:\Program Files\Git\bin"
+              if (Test-Path $gitPath) {
+                [System.Environment]::SetEnvironmentVariable("PATH", $env:PATH + ";" + $gitPath, [System.EnvironmentVariableTarget]::Process)
+                Write-Output "Manually added Git to PATH."
+              } else {
+                Write-Output "Git executable not found at the expected location."
+                exit 1
+              }
+            } else {
+              Write-Output "Git is correctly installed."
+            }
+            git --version
+          shell: powershell
+
+        # Step 4: Output the Current PATH Variable for Debugging
+        - name: Debug PATH Variable
+          run: |
+            Write-Output "Current PATH Variable:"
+            Write-Output $env:PATH
+          shell: powershell
+
         # # Uninstall any existing Git packages
         # - name: Uninstall Existing Git Packages
         #   run: |
