@@ -43,6 +43,17 @@ resource "azurerm_resource_group" "dep" {
   #name     = "${module.naming.resource_group.name_unique}-dep"
   name = "rg-weu-poc-plteng-04"
   location = "westeurope"
+    tags = {
+    # "hidden-title" = "This is visible in the resource name"
+    # Environment    = "Non-Prod"
+    # Role           = "DeploymentValidation"
+    "application_name"   = "Testing # 1.0"
+    "eam_id"             = "203196"
+    "lob_parent"         = "Information Technology"
+    "owner_email"        = "S49123@uniper.energy"
+    "environment"        = "INT"
+    "notification_email" = "uit-cmc-automation-services@uniper.energy"
+  }
 }
 
 resource "azurerm_user_assigned_identity" "dep_uai" {
