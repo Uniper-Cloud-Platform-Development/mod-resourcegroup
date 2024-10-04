@@ -39,13 +39,15 @@ resource "random_integer" "region_index" {
 }
 
 resource "azurerm_resource_group" "dep" {
-  location = module.regions.regions[random_integer.region_index.result].name
-  name     = "${module.naming.resource_group.name_unique}-dep"
+  #location = module.regions.regions[random_integer.region_index.result].name
+  #name     = "${module.naming.resource_group.name_unique}-dep"
+  name = "rg-weu-poc-plteng-04"
+  location = "westeurope"
 }
 
 resource "azurerm_user_assigned_identity" "dep_uai" {
   location            = azurerm_resource_group.dep.location
-  name                = module.naming.user_assigned_identity.name_unique
+  name                = "id-weu-plteng-01" #module.naming.user_assigned_identity.name_unique
   resource_group_name = azurerm_resource_group.dep.name
 }
 
@@ -54,7 +56,7 @@ module "resource_group" {
   # location = module.regions.regions[random_integer.region_index.result].name
   # name     = module.naming.resource_group.name_unique
   location = "westeurope"
-  name= "rg-weu-poc-plteng-04"
+  name = "rg-weu-poc-plteng-04"
   tags = {
     # "hidden-title" = "This is visible in the resource name"
     # Environment    = "Non-Prod"
