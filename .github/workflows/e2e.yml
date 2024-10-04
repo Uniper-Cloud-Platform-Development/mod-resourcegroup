@@ -56,8 +56,8 @@
             $installerPath = "c:\temp\Git-2.40.1-64-bit.exe"
             
             # Download the Git installer
-            Write-Output "Downloading Git installer from: $gitInstallerUrl"
-            Invoke-WebRequest -Uri $gitInstallerUrl -OutFile $installerPath -UseBasicParsing
+            #Write-Output "Downloading Git installer from: $gitInstallerUrl"
+            #Invoke-WebRequest -Uri $gitInstallerUrl -OutFile $installerPath -UseBasicParsing
   
             # Run the installer silently
             Write-Output "Installing Git silently..."
