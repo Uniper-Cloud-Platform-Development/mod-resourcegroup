@@ -57,75 +57,83 @@
             choco install terraform -y
             terraform -version
           shell: powershell
-        
-        - name: Install Git on Windows with Detailed Logging
+          
+        - name: Print PATH Environment Variable
           run: |
-            # Ensure the Temp directory exists
-            if (-not (Test-Path "C:\Temp")) {
-              Write-Output "Creating Temp directory at C:\Temp"
-              New-Item -Path "C:\Temp" -ItemType Directory -Force
-            } else {
-              Write-Output "Temp directory already exists at C:\Temp"
-            }
-        
-            # Define the URL of the Git installer
-            $gitInstallerUrl = "https://github.com/git-for-windows/git/releases/download/v2.40.1.windows.1/Git-2.40.1-64-bit.exe"
-            
-            # Define the path to save the installer
-            $installerPath = "C:\Temp\Git-2.40.1-64-bit.exe"
-            Write-Output "The installer will be saved to: $installerPath"
-            
-            # Download the Git installer
-            Write-Output "Downloading Git installer from: $gitInstallerUrl"
-            try {
-              Invoke-WebRequest -Uri $gitInstallerUrl -OutFile $installerPath -UseBasicParsing
-              Write-Output "Successfully downloaded the Git installer."
-            } catch {
-              Write-Output "Failed to download the Git installer."
-              Write-Output "Error Message: $($_.Exception.Message)"
-              exit 1
-            }
-        
-            # Verify that the installer was downloaded successfully
-            if (-not (Test-Path $installerPath)) {
-              Write-Output "Installer file does not exist at path: $installerPath"
-              exit 1
-            }
-        
-            Write-Output "Starting Git installation silently..."
-            # Run the installer silently and capture the process exit code
-            try {
-              $process = Start-Process -FilePath $installerPath -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART" -NoNewWindow -Wait -PassThru
-              $exitCode = $process.ExitCode
-              Write-Output "Git installer exited with code: $exitCode"
-            } catch {
-              Write-Output "Git installation encountered an error during execution."
-              Write-Output "Error Message: $($_.Exception.Message)"
-              exit 1
-            }
-        
-            # Check the exit code to determine success or failure
-            if ($exitCode -eq 0) {
-              Write-Output "Git installation completed successfully with exit code 0."
-            } else {
-              Write-Output "Git installation failed with exit code $exitCode."
-              exit $exitCode
-            }
-        
-            # Verify Git installation by checking the version
-            if (Get-Command git -ErrorAction SilentlyContinue) {
-              Write-Output "Git installation successful and git is in the PATH."
-              git --version
-            } else {
-              Write-Output "Git installation failed or git is not in the PATH."
-              exit 1
-            }
-        
-            # Clean up the installer after installation
-            Write-Output "Cleaning up the installer file..."
-            Remove-Item -Path $installerPath -Force
-            Write-Output "Installer file removed from $installerPath"
+            echo "Current PATH:"
+            echo $env:PATH
+            Write-Output "Git Executable Location:"
+            Get-Command git
           shell: powershell
+        
+        # - name: Install Git on Windows with Detailed Logging
+        #   run: |
+        #     # Ensure the Temp directory exists
+        #     if (-not (Test-Path "C:\Temp")) {
+        #       Write-Output "Creating Temp directory at C:\Temp"
+        #       New-Item -Path "C:\Temp" -ItemType Directory -Force
+        #     } else {
+        #       Write-Output "Temp directory already exists at C:\Temp"
+        #     }
+        
+        #     # Define the URL of the Git installer
+        #     $gitInstallerUrl = "https://github.com/git-for-windows/git/releases/download/v2.40.1.windows.1/Git-2.40.1-64-bit.exe"
+            
+        #     # Define the path to save the installer
+        #     $installerPath = "C:\Temp\Git-2.40.1-64-bit.exe"
+        #     Write-Output "The installer will be saved to: $installerPath"
+            
+        #     # Download the Git installer
+        #     Write-Output "Downloading Git installer from: $gitInstallerUrl"
+        #     try {
+        #       Invoke-WebRequest -Uri $gitInstallerUrl -OutFile $installerPath -UseBasicParsing
+        #       Write-Output "Successfully downloaded the Git installer."
+        #     } catch {
+        #       Write-Output "Failed to download the Git installer."
+        #       Write-Output "Error Message: $($_.Exception.Message)"
+        #       exit 1
+        #     }
+        
+        #     # Verify that the installer was downloaded successfully
+        #     if (-not (Test-Path $installerPath)) {
+        #       Write-Output "Installer file does not exist at path: $installerPath"
+        #       exit 1
+        #     }
+        
+        #     Write-Output "Starting Git installation silently..."
+        #     # Run the installer silently and capture the process exit code
+        #     try {
+        #       $process = Start-Process -FilePath $installerPath -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART" -NoNewWindow -Wait -PassThru
+        #       $exitCode = $process.ExitCode
+        #       Write-Output "Git installer exited with code: $exitCode"
+        #     } catch {
+        #       Write-Output "Git installation encountered an error during execution."
+        #       Write-Output "Error Message: $($_.Exception.Message)"
+        #       exit 1
+        #     }
+        
+        #     # Check the exit code to determine success or failure
+        #     if ($exitCode -eq 0) {
+        #       Write-Output "Git installation completed successfully with exit code 0."
+        #     } else {
+        #       Write-Output "Git installation failed with exit code $exitCode."
+        #       exit $exitCode
+        #     }
+        
+        #     # Verify Git installation by checking the version
+        #     if (Get-Command git -ErrorAction SilentlyContinue) {
+        #       Write-Output "Git installation successful and git is in the PATH."
+        #       git --version
+        #     } else {
+        #       Write-Output "Git installation failed or git is not in the PATH."
+        #       exit 1
+        #     }
+        
+        #     # Clean up the installer after installation
+        #     Write-Output "Cleaning up the installer file..."
+        #     Remove-Item -Path $installerPath -Force
+        #     Write-Output "Installer file removed from $installerPath"
+        #   shell: powershell
         
   
         - name: Initialize Terraform for example
