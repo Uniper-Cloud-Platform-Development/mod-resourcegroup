@@ -76,32 +76,32 @@
           shell: powershell
         
         # Step 1: Completely Remove Any Existing Git Installation
-        - name: Clean Up All Existing Git Installations
-          run: |
-            Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
-            Write-Output "Uninstalling any existing Git packages..."
+        # - name: Clean Up All Existing Git Installations
+        #   run: |
+        #     Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
+        #     Write-Output "Uninstalling any existing Git packages..."
             
-            try {
-              choco uninstall git.install -y --remove-dependencies
-              Write-Output "Successfully uninstalled git.install."
-            } catch {
-              Write-Output "No git.install package found."
-            }
+        #     try {
+        #       choco uninstall git.install -y --remove-dependencies
+        #       Write-Output "Successfully uninstalled git.install."
+        #     } catch {
+        #       Write-Output "No git.install package found."
+        #     }
 
-            try {
-              choco uninstall git -y --remove-dependencies
-              Write-Output "Successfully uninstalled git."
-            } catch {
-              Write-Output "No git package found."
-            }
+        #     try {
+        #       choco uninstall git -y --remove-dependencies
+        #       Write-Output "Successfully uninstalled git."
+        #     } catch {
+        #       Write-Output "No git package found."
+        #     }
 
-            # Manually clean up any residual Git files to avoid conflicts
-            Remove-Item -Path "C:\Program Files\Git" -Recurse -Force -ErrorAction SilentlyContinue
-            Remove-Item -Path "C:\Program Files (x86)\Git" -Recurse -Force -ErrorAction SilentlyContinue
-            Remove-Item -Path "C:\ProgramData\chocolatey\lib\git*" -Recurse -Force -ErrorAction SilentlyContinue
-            Remove-Item -Path "C:\ProgramData\chocolatey\bin\git*" -Recurse -Force -ErrorAction SilentlyContinue
-            Write-Output "Removed all Git residual files."
-          shell: powershell
+        #     # Manually clean up any residual Git files to avoid conflicts
+        #     Remove-Item -Path "C:\Program Files\Git" -Recurse -Force -ErrorAction SilentlyContinue
+        #     Remove-Item -Path "C:\Program Files (x86)\Git" -Recurse -Force -ErrorAction SilentlyContinue
+        #     Remove-Item -Path "C:\ProgramData\chocolatey\lib\git*" -Recurse -Force -ErrorAction SilentlyContinue
+        #     Remove-Item -Path "C:\ProgramData\chocolatey\bin\git*" -Recurse -Force -ErrorAction SilentlyContinue
+        #     Write-Output "Removed all Git residual files."
+        #   shell: powershell
 
         # Step 2: Install Git Using Chocolatey (Only `git` Package)
         - name: Install Git Using Chocolatey
