@@ -2,9 +2,9 @@ resource "azurerm_resource_group" "this" {
   location = var.location
   name     = var.name
   tags     = var.tags
-  lifecycle {
-    ignore_changes = [ tags ]
-  }
+  # lifecycle {
+  #   ignore_changes = [ tags ]
+  # }
 }
 
 # required AVM resources interfaces
