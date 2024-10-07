@@ -39,11 +39,11 @@ resource "random_integer" "region_index" {
 }
 
 module "resource_group" {
-  source   = "../../"
+  source = "../../"
   # location = module.regions.regions[random_integer.region_index.result].name
   # name     = module.naming.resource_group.name_unique
   location = "westeurope"
-  name = "rg-weu-poc-plteng-04"
+  name     = "rg-weu-poc-plteng-04"
   tags = {
     # "hidden-title" = "This is visible in the resource name"
     # Environment    = "Non-Prod"
