@@ -1,4 +1,4 @@
-name: Terraform Docs, Formatting, and Linting
+name: Terraform Linting
 
 on:
   pull_request:
