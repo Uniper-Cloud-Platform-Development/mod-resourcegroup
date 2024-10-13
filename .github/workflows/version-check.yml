@@ -21,7 +21,7 @@ jobs:
 
       # Step 2: Check version using your custom version-check action
       - name: Check version
-        uses: ./.github/actions/version-check  # Referencing your custom action
+        uses: ./.github/actions/version-check # Referencing your custom action
         # with:
         #   github_token: ${{ secrets.GITHUB_TOKEN }}
 
