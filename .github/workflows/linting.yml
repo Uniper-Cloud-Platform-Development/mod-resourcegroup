@@ -25,11 +25,20 @@ jobs:
         with:
           node-version: '16'  # You can change this to another version if required
 
-      # Step 3: Run markdownlint to check README.md formatting (root directory)
+      # # Step 3: Run markdownlint to check README.md formatting (root directory)
+      # - name: Markdownlint - Check README.md format
+      #   run: |
+      #     npm install -g markdownlint-cli
+      #     markdownlint "README.md"
+
+      # Step 3: Run markdownlint using a pre-configured action
       - name: Markdownlint - Check README.md format
-        run: |
-          npm install -g markdownlint-cli
-          markdownlint "README.md"
+        uses: github/super-linter@v4
+        env:
+          VALIDATE_MARKDOWN: true
+        with:
+          file_filter: 'README.md'
+
 
   terraform:
     if: github.event.repository.name != 'terraform-azurerm-avm-template'
@@ -57,10 +66,10 @@ jobs:
           terraform init -backend=false  # Initialize Terraform without a backend
           terraform validate
 
-      # # Step 5: Install TFLint for linting Terraform files
-      # - name: Install TFLint
-      #   run: |
-      #     curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+      # Step 5: Install TFLint for linting Terraform files
+      - name: Install TFLint
+        run: |
+          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
       # Step 6: Run TFLint for Terraform linting
       - name: Terraform lint
