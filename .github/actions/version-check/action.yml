@@ -10,7 +10,7 @@ runs:
   steps:
     - name: Run version check script
       shell: bash
-      run: ./github/version-check/version-check-script.sh
+      run: ./.github/version-check/version-check-script.sh
 
 # author: AVM
 # name: Module version check
