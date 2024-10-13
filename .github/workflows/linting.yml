@@ -32,7 +32,7 @@ jobs:
 
   terraform:
     if: github.event.repository.name != 'terraform-azurerm-avm-template'
-    name: Terraform Linting and Validation
+    name: Terraform Linting and formatting
     runs-on: ubuntu-latest
     steps:
       # Step 1: Checkout the repository code
