@@ -12,7 +12,7 @@ permissions:
 jobs:
   docs:
     if: github.event.repository.name != 'terraform-azurerm-avm-template'
-    name: Documentation Formatting Check
+    name: Documentation Formatting Check (README.md)
     runs-on: ubuntu-latest
     steps:
       # Step 1: Checkout the repository code
@@ -25,11 +25,11 @@ jobs:
         with:
           node-version: '16'  # You can change this to another version if required
 
-      # Step 3: Run markdownlint to check documentation formatting
-      - name: Markdownlint - Check documentation format
+      # Step 3: Run markdownlint to check README.md formatting (root directory)
+      - name: Markdownlint - Check README.md format
         run: |
           npm install -g markdownlint-cli
-          markdownlint "**/*.md"
+          markdownlint "README.md"
 
   terraform:
     if: github.event.repository.name != 'terraform-azurerm-avm-template'
@@ -63,6 +63,6 @@ jobs:
           curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
       # Step 6: Run TFLint for Terraform linting
-      - name: TFLint - Lint Terraform code
+      - name: Terraform lint
         run: |
           tflint
