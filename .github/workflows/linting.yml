@@ -19,20 +19,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Install Terraform (Set up Terraform on Ubuntu)
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
+      # Step 2: Install Node.js and npm (for markdownlint)
+      - name: Install Node.js and npm
+        uses: actions/setup-node@v3
         with:
-          terraform_version: 1.5.0  # Adjust the version if needed
+          node-version: '16'  # You can change this to another version if required
 
-      # Step 3: Run Terraform fmt to check documentation format (docfmt)
-      - name: Terraform docfmt - Check formatting
+      # Step 3: Run markdownlint to check documentation formatting
+      - name: Markdownlint - Check documentation format
         run: |
-          terraform fmt -check
+          npm install -g markdownlint-cli
+          markdownlint "**/*.md"
 
   terraform:
     if: github.event.repository.name != 'terraform-azurerm-avm-template'
-    name: Terraform Linting and formatting
+    name: Terraform Linting and Formatting
     runs-on: ubuntu-latest
     steps:
       # Step 1: Checkout the repository code
@@ -50,11 +51,11 @@ jobs:
         run: |
           terraform fmt -check
 
-      # # Step 4: Run Terraform validate to check configuration
-      # - name: Terraform validate - Check configuration
-      #   run: |
-      #     terraform init -backend=false  # Initialize Terraform without a backend
-      #     terraform validate
+      # Step 4: Run Terraform validate to check configuration
+      - name: Terraform validate - Check configuration
+        run: |
+          terraform init -backend=false  # Initialize Terraform without a backend
+          terraform validate
 
       # Step 5: Install TFLint for linting Terraform files
       - name: Install TFLint
@@ -65,61 +66,3 @@ jobs:
       - name: TFLint - Lint Terraform code
         run: |
           tflint
-# ---
-# name: linting
-
-# on:
-#   pull_request:
-#     types: ['opened', 'reopened', 'synchronize']
-#   merge_group:
-#   workflow_dispatch:
-
-# permissions:
-#   contents: read
-
-# concurrency:
-#   group: linting-${{ github.event.pull_request.head.repo.full_name }}/${{ github.head_ref || github.run_id }}
-#   cancel-in-progress: true
-
-# jobs:
-#   docs:
-#     if: github.event.repository.name != 'terraform-azurerm-avm-template'
-#     name: docs
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: checkout repository
-#         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
-
-#       - name: check docs
-#         uses: Azure/terraform-azurerm-avm-template/.github/actions/docs-check@main
-
-#   terraform:
-#     if: github.event.repository.name != 'terraform-azurerm-avm-template'
-#     name: terraform
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: checkout repository
-#         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
-
-#       - name: lint terraform
-#         uses: Azure/terraform-azurerm-avm-template/.github/actions/linting@main
-#         with:
-#           github-token: ${{ secrets.GITHUB_TOKEN }}
-
-#   avmfix:
-#     if: github.event.repository.name != 'terraform-azurerm-avm-template'
-#     name: avmfix
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: checkout repository
-#         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
-
-#       - name: avmfix
-#         uses: Azure/terraform-azurerm-avm-template/.github/actions/avmfix@main
-
-#   lintcomplete:
-#     needs: [docs, terraform, avmfix]
-#     #needs: [docs, terraform]
-#     runs-on: ubuntu-latest
-#     steps:
-#       - run: echo "All linting checks passed"
