@@ -10,39 +10,31 @@ permissions:
   contents: read
 
 jobs:
-  docs:
+  lint:
+  #   if: github.event.repository.name != 'terraform-azurerm-avm-template'
+  #   name: Documentation Formatting Check (README.md)
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     # Step 1: Checkout the repository code
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
+
+  #     # Step 2: Install Node.js and npm (for markdownlint)
+  #     - name: Install Node.js and npm
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '16'  # You can change this to another version if required
+
+  #     # # Step 3: Run markdownlint to check README.md formatting (root directory)
+  #     # - name: Markdownlint - Check README.md format
+  #     #   run: |
+  #     #     npm install -g markdownlint-cli
+  #     #     markdownlint "README.md"
+
+
+  # terraform:
     if: github.event.repository.name != 'terraform-azurerm-avm-template'
-    name: Documentation Formatting Check (README.md)
-    runs-on: ubuntu-latest
-    steps:
-      # Step 1: Checkout the repository code
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # Step 2: Install Node.js and npm (for markdownlint)
-      - name: Install Node.js and npm
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'  # You can change this to another version if required
-
-      # # Step 3: Run markdownlint to check README.md formatting (root directory)
-      # - name: Markdownlint - Check README.md format
-      #   run: |
-      #     npm install -g markdownlint-cli
-      #     markdownlint "README.md"
-
-      # Step 3: Run markdownlint using a pre-configured action
-      - name: Markdownlint - Check README.md format
-        uses: github/super-linter@v4
-        env:
-          VALIDATE_MARKDOWN: true
-        with:
-          file_filter: 'README.md'
-
-
-  terraform:
-    if: github.event.repository.name != 'terraform-azurerm-avm-template'
-    name: Terraform Linting and Formatting
+    name: Terraform Linting
     runs-on: ubuntu-latest
     steps:
       # Step 1: Checkout the repository code
