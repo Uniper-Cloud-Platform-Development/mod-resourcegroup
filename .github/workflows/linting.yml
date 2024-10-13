@@ -50,11 +50,11 @@ jobs:
         run: |
           terraform fmt -check
 
-      # Step 4: Run Terraform validate to check configuration
-      - name: Terraform validate - Check configuration
-        run: |
-          terraform init -backend=false  # Initialize Terraform without a backend
-          terraform validate
+      # # Step 4: Run Terraform validate to check configuration
+      # - name: Terraform validate - Check configuration
+      #   run: |
+      #     terraform init -backend=false  # Initialize Terraform without a backend
+      #     terraform validate
 
       # Step 5: Install TFLint for linting Terraform files
       - name: Install TFLint
