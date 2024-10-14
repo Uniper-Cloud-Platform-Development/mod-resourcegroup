@@ -54,6 +54,10 @@ jobs:
       # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v4
+      
+      # Step 2: Add execute permissions to the script
+      - name: Add execute permissions to avm.sh
+        run: chmod +x .github/actions/version-check/avm.sh
 
       # Step 2: Run the AVM autofix script locally (instead of using Docker)
       - name: Run AVM Autofix
