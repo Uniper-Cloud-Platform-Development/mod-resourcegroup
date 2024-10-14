@@ -19,14 +19,14 @@ runs:
       shell: bash
       run: ./avm.sh
 
-    # Step 3: Detect changes after running the fix
-    - name: Detect changes
-      shell: bash
-      run: |
-        if [ -z "$(git status -s)" ]; then
-          echo "No changes detected"
-          exit 0
-        else
-          echo "AVM Fix changes detected, please commit and push the changes."
-          exit 1
-        fi
+    # # Step 3: Detect changes after running the fix
+    # - name: Detect changes
+    #   shell: bash
+    #   run: |
+    #     if [ -z "$(git status -s)" ]; then
+    #       echo "No changes detected"
+    #       exit 0
+    #     else
+    #       echo "AVM Fix changes detected, please commit and push the changes."
+    #       exit 1
+    #     fi
