@@ -16,7 +16,7 @@ resource "azurerm_management_lock" "this" {
   scope      = azurerm_resource_group.this.id
   notes      = var.lock.kind == "CanNotDelete" ? "Cannot delete the resource or its child resources." : "Cannot delete or modify the resource or its child resources."
 }
-#Role assignment
+
 resource "azurerm_role_assignment" "this" {
   for_each = var.role_assignments
 
