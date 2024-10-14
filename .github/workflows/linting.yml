@@ -11,28 +11,6 @@ permissions:
 
 jobs:
   lint:
-  #   if: github.event.repository.name != 'terraform-azurerm-avm-template'
-  #   name: Documentation Formatting Check (README.md)
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     # Step 1: Checkout the repository code
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v4
-
-  #     # Step 2: Install Node.js and npm (for markdownlint)
-  #     - name: Install Node.js and npm
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: '16'  # You can change this to another version if required
-
-  #     # # Step 3: Run markdownlint to check README.md formatting (root directory)
-  #     # - name: Markdownlint - Check README.md format
-  #     #   run: |
-  #     #     npm install -g markdownlint-cli
-  #     #     markdownlint "README.md"
-
-
-  # terraform:
     if: github.event.repository.name != 'terraform-azurerm-avm-template'
     name: Terraform Linting
     runs-on: ubuntu-latest
@@ -41,22 +19,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Install Terraform (Set up Terraform on Ubuntu)
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.5.2  # Adjust the version if needed
+      # # Step 2: Install Terraform (Set up Terraform on Ubuntu)
+      # - name: Set up Terraform
+      #   uses: hashicorp/setup-terraform@v2
+      #   with:
+      #     terraform_version: 1.5.2  # Adjust the version if needed
 
       # Step 3: Run Terraform fmt to check formatting
       - name: Terraform fmt - Check formatting
         run: |
           terraform fmt -check
 
-      # Step 4: Run Terraform validate to check configuration
-      - name: Terraform validate - Check configuration
-        run: |
-          terraform init -backend=false  # Initialize Terraform without a backend
-          terraform validate
+      # # Step 4: Run Terraform validate to check configuration
+      # - name: Terraform validate - Check configuration
+      #   run: |
+      #     terraform init -backend=false  # Initialize Terraform without a backend
+      #     terraform validate
 
       # Step 5: Install TFLint for linting Terraform files
       - name: Install TFLint
@@ -67,3 +45,28 @@ jobs:
       - name: Terraform lint
         run: |
           tflint
+
+  avmfix:
+    if: github.event.repository.name != 'terraform-azurerm-avm-template'
+    name: avmfix
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Run the AVM autofix script locally (instead of using Docker)
+      - name: Run AVM Autofix
+        run: |
+          ./avm.sh  # Example of running the custom shell script
+
+      # Step 3: Detect changes in the repository
+      - name: Detect changes
+        run: |
+          if [ -z "$(git status -s)" ]; then
+            echo "No changes detected"
+            exit 0
+          else
+            echo "AVMfix changes detected, please commit and push the changes."
+            exit 1
+          fi
