@@ -1,0 +1,49 @@
+name: 'KeyVault Deployment'
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  # Job for DEV Environment
+  terraform-dev:
+    name: 'KeyVault Deployment - DEV'
+    runs-on: windows-latest
+    environment: test
+
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Setup Terraform on Windows
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.9.5
+
+      # Step 3: Terraform Init 
+      - name: Terraform Init 
+        working-directory: ./tests/unit/
+        id: init
+        shell: powershell  # Using PowerShell on Windows
+        env: 
+            ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+            ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+            ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+            ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        run: |
+          terraform init -backend=false -reconfigure
+
+      # Step 4: Terraform Unit Testing 
+      - name: Terraform Unit Testing 
+        working-directory: ./tests/unit/
+        shell: powershell
+        env:
+            ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+            ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+            ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+            ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        run: terraform test

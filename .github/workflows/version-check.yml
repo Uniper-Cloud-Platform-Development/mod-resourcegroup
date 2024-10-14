@@ -31,9 +31,9 @@ jobs:
       - name: List all git tags
         run: git tag
 
-      # Debugging Step: List all commits with tags
-      - name: List all commits and tags
-        run: git log --decorate --oneline --graph --all
+      # # Debugging Step: List all commits with tags
+      # - name: List all commits and tags
+      #   run: git log --decorate --oneline --graph --all
 
       # Step 4: Check version using your custom version-check action
       - name: Check version

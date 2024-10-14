@@ -19,29 +19,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # # Step 2: Install Terraform (Set up Terraform on Ubuntu)
-      # - name: Set up Terraform
-      #   uses: hashicorp/setup-terraform@v2
-      #   with:
-      #     terraform_version: 1.5.2  # Adjust the version if needed
-
-      # Step 3: Run Terraform fmt to check formatting
+      # Step 2: Run Terraform fmt to check formatting
       - name: Terraform fmt - Check formatting
         run: |
           terraform fmt -check
 
-      # # Step 4: Run Terraform validate to check configuration
-      # - name: Terraform validate - Check configuration
-      #   run: |
-      #     terraform init -backend=false  # Initialize Terraform without a backend
-      #     terraform validate
-
-      # Step 5: Install TFLint for linting Terraform files
+      # Step 3: Install TFLint for linting Terraform files
       - name: Install TFLint
         run: |
           curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
-      # Step 6: Run TFLint for Terraform linting
+      # Step 4: Run TFLint for Terraform linting
       - name: Terraform lint
         run: |
           tflint
@@ -59,31 +47,3 @@ jobs:
           # with:
           #   github-token: ${{ secrets.GITHUB_TOKEN }}
           
-  # avmfix:
-  #   if: github.event.repository.name != 'terraform-azurerm-avm-template'
-  #   name: avmfix
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     # Step 1: Checkout the repository
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v4
-      
-  #     # Step 2: Add execute permissions to the script
-  #     - name: Add execute permissions to avm.sh
-  #       run: chmod +x avm.sh
-
-  #     # Step 2: Run the AVM autofix script locally (instead of using Docker)
-  #     - name: Run AVM Autofix
-  #       run: |
-  #         ./avm.sh  # Example of running the custom shell script
-
-      # # Step 3: Detect changes in the repository
-      # - name: Detect changes
-      #   run: |
-      #     if [ -z "$(git status -s)" ]; then
-      #       echo "No changes detected"
-      #       exit 0
-      #     else
-      #       echo "AVMfix changes detected, please commit and push the changes."
-      #       exit 1
-      #     fi
