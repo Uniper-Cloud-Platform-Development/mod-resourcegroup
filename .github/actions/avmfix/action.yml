@@ -15,7 +15,7 @@ runs:
       run: chmod +x avm.sh
 
     # Step 2: Run the avm.sh script
-    - name: Run avmfix
+    - name: Detect changes
       shell: bash
       run: ./avm.sh
 
