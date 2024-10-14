@@ -39,24 +39,45 @@ resource "random_integer" "region_index" {
 }
 
 resource "azurerm_resource_group" "dep" {
-  location = module.regions.regions[random_integer.region_index.result].name
-  name     = "${module.naming.resource_group.name_unique}-dep"
+  #location = module.regions.regions[random_integer.region_index.result].name
+  #name     = "${module.naming.resource_group.name_unique}-dep"
+  name     = "rg-weu-poc-plteng-06"
+  location = "westeurope"
+  tags = {
+    # "hidden-title" = "This is visible in the resource name"
+    # Environment    = "Non-Prod"
+    # Role           = "DeploymentValidation"
+    "application_name"   = "Testing # 1.0"
+    "eam_id"             = "203196"
+    "lob_parent"         = "Information Technology"
+    "owner_email"        = "S49123@uniper.energy"
+    "environment"        = "INT"
+    "notification_email" = "uit-cmc-automation-services@uniper.energy"
+  }
 }
 
 resource "azurerm_user_assigned_identity" "dep_uai" {
   location            = azurerm_resource_group.dep.location
-  name                = module.naming.user_assigned_identity.name_unique
+  name                = "id-weu-plteng-01" #module.naming.user_assigned_identity.name_unique
   resource_group_name = azurerm_resource_group.dep.name
 }
 
 module "resource_group" {
-  source   = "../../"
-  location = module.regions.regions[random_integer.region_index.result].name
-  name     = module.naming.resource_group.name_unique
+  source = "../../"
+  # location = module.regions.regions[random_integer.region_index.result].name
+  # name     = module.naming.resource_group.name_unique
+  location = "westeurope"
+  name     = "rg-weu-poc-plteng-05"
   tags = {
-    "hidden-title" = "This is visible in the resource name"
-    Environment    = "Non-Prod"
-    Role           = "DeploymentValidation"
+    # "hidden-title" = "This is visible in the resource name"
+    # Environment    = "Non-Prod"
+    # Role           = "DeploymentValidation"
+    "application_name"   = "Testing # 1.0"
+    "eam_id"             = "203196"
+    "lob_parent"         = "Information Technology"
+    "owner_email"        = "S49123@uniper.energy"
+    "environment"        = "INT"
+    "notification_email" = "uit-cmc-automation-services@uniper.energy"
   }
   lock = {
     kind = "CanNotDelete"

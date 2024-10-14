@@ -13,7 +13,7 @@ mock_provider "azurerm" {
 run "test_valid_resource_group_name" {
   command = plan
   variables {
-    name = "rg-niceresourcegroup-name"
+    name = "rg-weu-poc-plteng-06"
   }
 }
 

@@ -1,9 +1,10 @@
----
 name: version-check
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
-  merge_group:
   pull_request:
     branches:
       - main
@@ -13,11 +14,29 @@ permissions:
 
 jobs:
   version-check:
-    if: github.event.repository.name != 'terraform-azurerm-avm-template'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
+      # Step 1: Checkout the repository
+      - uses: actions/checkout@v4
+
+      # Step 2: Add execute permissions to the script
+      - name: Add execute permissions to version-check-script.sh
+        run: chmod +x .github/actions/version-check/version-check-script.sh
+
+      # Step 3: Fetch all tags to ensure they're available
+      - name: Fetch all tags
+        run: git fetch --tags
+    
+      # Debugging Step: List all tags (Optional)
+      - name: List all git tags
+        run: git tag
+
+      # # Debugging Step: List all commits with tags
+      # - name: List all commits and tags
+      #   run: git log --decorate --oneline --graph --all
+
+      # Step 4: Check version using your custom version-check action
       - name: Check version
-        uses: Azure/terraform-azurerm-avm-template/.github/actions/version-check@main
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+        uses: ./.github/actions/version-check 
+
+
