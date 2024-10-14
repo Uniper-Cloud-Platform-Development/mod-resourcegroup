@@ -29,3 +29,4 @@ runs:
         else
           echo "AVM Fix changes detected, please commit and push the changes."
           exit 1
+        fi
