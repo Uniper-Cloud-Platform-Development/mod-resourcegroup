@@ -1,28 +1,59 @@
-author: AVM
-name: avmfix
-description: Ensures that avmfix has been run.
+name: 'AVM Fix Action'
+description: 'Ensures that AVM Fix has been applied'
+
+inputs:
+  github-token:
+    description: 'GitHub Token'
+    required: true
 
 runs:
-  using: composite
+  using: 'composite'
   steps:
-    - name: run avmfix
-      shell: bash
-      run: |
-        docker run --rm -v $(pwd):/src -w /src mcr.microsoft.com/azterraform make autofix
+    # Step 1: Add execute permissions to avm.sh in the root directory
+    - name: Add execute permissions to avm.sh
+      run: chmod +x avm.sh
 
-    - name: detect changes
-      shell: bash
+    # Step 2: Run the avm.sh script
+    - name: Run avmfix
+      run: ./avm.sh
+
+    # Step 3: Detect changes after running the fix
+    - name: Detect changes
       run: |
-        if [ -z $(git status -s) ]; then
+        if [ -z "$(git status -s)" ]; then
           echo "No changes detected"
           exit 0
         else
-          echo "AVMfix changes detected, please run:"
-          echo "> docker run --rm -v $(pwd):/src -w /src mcr.microsoft.com/azterraform make pre-commit"
-          echo "... or if you have the avm helper script installed:"
-          echo "> ./avm pre-commit"
-          echo "> avm.bat pre-commit (on Windows)"
-          echo
-          echo "Then commit and push the changes"
+          echo "AVM Fix changes detected, please commit and push the changes."
           exit 1
         fi
+
+
+# author: AVM
+# name: avmfix
+# description: Ensures that avmfix has been run.
+
+# runs:
+#   using: composite
+#   steps:
+#     - name: run avmfix
+#       shell: bash
+#       run: |
+#         docker run --rm -v $(pwd):/src -w /src mcr.microsoft.com/azterraform make autofix
+
+#     - name: detect changes
+#       shell: bash
+#       run: |
+#         if [ -z $(git status -s) ]; then
+#           echo "No changes detected"
+#           exit 0
+#         else
+#           echo "AVMfix changes detected, please run:"
+#           echo "> docker run --rm -v $(pwd):/src -w /src mcr.microsoft.com/azterraform make pre-commit"
+#           echo "... or if you have the avm helper script installed:"
+#           echo "> ./avm pre-commit"
+#           echo "> avm.bat pre-commit (on Windows)"
+#           echo
+#           echo "Then commit and push the changes"
+#           exit 1
+#         fi
