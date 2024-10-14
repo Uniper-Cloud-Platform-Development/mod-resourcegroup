@@ -3,13 +3,13 @@ name: 'Unit Testing'
 on:
   push:
     branches:
-      - main
+      - dev
   pull_request:
 
 jobs:
   # Job for DEV Environment
   terraform-dev:
-    name: 'KeyVault Deployment - DEV'
+    name: 'Testing'
     runs-on: windows-latest
     environment: test
 
