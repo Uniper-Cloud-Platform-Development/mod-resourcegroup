@@ -19,6 +19,10 @@ jobs:
       # Step 1: Checkout the repository
       - uses: actions/checkout@v4
 
+      # Step 2: Add execute permissions to the script
+      - name: Add execute permissions to version-check-script.sh
+        run: chmod +x .github/actions/version-check/version-check-script.sh
+
       # Step 2: Check version using your custom version-check action
       - name: Check version
         uses: ./.github/actions/version-check # Referencing your custom action
