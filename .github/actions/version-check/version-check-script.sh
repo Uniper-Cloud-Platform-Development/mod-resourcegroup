@@ -12,8 +12,11 @@ fi
 # Extract the current version from the JSON file
 CURRENT_VERSION=$(jq -r '.version' "$VERSION_FILE")
 
-# Get the latest git tag version (handle no tags found)
-LATEST_VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+# Fetch all tags (ensure tags are up to date)
+git fetch --tags
+
+# Get the latest git tag version using git tag with sorting
+LATEST_VERSION=$(git tag --sort=-v:refname | head -n 1)
 
 if [ -z "$LATEST_VERSION" ]; then
   echo "No git tags found. Assuming initial version."
