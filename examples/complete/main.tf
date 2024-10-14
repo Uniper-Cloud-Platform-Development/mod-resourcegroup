@@ -41,7 +41,7 @@ resource "random_integer" "region_index" {
 resource "azurerm_resource_group" "dep" {
   #location = module.regions.regions[random_integer.region_index.result].name
   #name     = "${module.naming.resource_group.name_unique}-dep"
-  name     = "rg-weu-poc-plteng-05"
+  name     = "rg-weu-poc-plteng-06"
   location = "westeurope"
   tags = {
     # "hidden-title" = "This is visible in the resource name"
@@ -67,7 +67,7 @@ module "resource_group" {
   # location = module.regions.regions[random_integer.region_index.result].name
   # name     = module.naming.resource_group.name_unique
   location = "westeurope"
-  name     = "rg-weu-poc-plteng-04"
+  name     = "rg-weu-poc-plteng-05"
   tags = {
     # "hidden-title" = "This is visible in the resource name"
     # Environment    = "Non-Prod"
