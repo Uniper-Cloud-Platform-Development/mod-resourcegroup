@@ -23,7 +23,15 @@ jobs:
       - name: Add execute permissions to version-check-script.sh
         run: chmod +x .github/actions/version-check/version-check-script.sh
 
-      # Step 2: Check version using your custom version-check action
+      # Step 3: Fetch all tags to ensure they're available
+      - name: Fetch all tags
+        run: git fetch --tags
+    
+      # Debugging Step: List all tags (Optional)
+      - name: List all git tags
+        run: git tag
+
+      # Step 4: Check version using your custom version-check action
       - name: Check version
         uses: ./.github/actions/version-check # Referencing your custom action
         # with:
