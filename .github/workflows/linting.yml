@@ -44,6 +44,4 @@ jobs:
         # Step 2: Run the AVM Fix Action
         - name: Run AVM Fix
           uses: ./.github/actions/avmfix
-          # with:
-          #   github-token: ${{ secrets.GITHUB_TOKEN }}
           

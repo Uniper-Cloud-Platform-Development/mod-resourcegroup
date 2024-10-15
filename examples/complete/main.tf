@@ -38,47 +38,23 @@ resource "random_integer" "region_index" {
   min = 0
 }
 
-resource "azurerm_resource_group" "dep" {
-  #location = module.regions.regions[random_integer.region_index.result].name
-  #name     = "${module.naming.resource_group.name_unique}-dep"
-  name     = "rg-weu-poc-plteng-06"
-  location = "westeurope"
-  tags = {
-    # "hidden-title" = "This is visible in the resource name"
-    # Environment    = "Non-Prod"
-    # Role           = "DeploymentValidation"
-    "application_name"   = "Testing # 1.0"
-    "eam_id"             = "203196"
-    "lob_parent"         = "Information Technology"
-    "owner_email"        = "S49123@uniper.energy"
-    "environment"        = "INT"
-    "notification_email" = "uit-cmc-automation-services@uniper.energy"
-  }
+resource "azurerm_resource_group" "dep" { 
+  name     = "rg-${var.region}-${var.environment}-shared${var.appshortname}-08"
+  location = var.location
+  tags = var.tags
 }
 
 resource "azurerm_user_assigned_identity" "dep_uai" {
   location            = azurerm_resource_group.dep.location
-  name                = "id-weu-plteng-01" #module.naming.user_assigned_identity.name_unique
+  name                = var.identity 
   resource_group_name = azurerm_resource_group.dep.name
 }
 
 module "resource_group" {
   source = "../../"
-  # location = module.regions.regions[random_integer.region_index.result].name
-  # name     = module.naming.resource_group.name_unique
-  location = "westeurope"
-  name     = "rg-weu-poc-plteng-05"
-  tags = {
-    # "hidden-title" = "This is visible in the resource name"
-    # Environment    = "Non-Prod"
-    # Role           = "DeploymentValidation"
-    "application_name"   = "Testing # 1.0"
-    "eam_id"             = "203196"
-    "lob_parent"         = "Information Technology"
-    "owner_email"        = "S49123@uniper.energy"
-    "environment"        = "INT"
-    "notification_email" = "uit-cmc-automation-services@uniper.energy"
-  }
+  name     = "rg-${var.region}-${var.environment}-shared${var.appshortname}-09"
+  location = var.location
+  tags = var.tags
   lock = {
     kind = "CanNotDelete"
     name = "myCustomLockName"
