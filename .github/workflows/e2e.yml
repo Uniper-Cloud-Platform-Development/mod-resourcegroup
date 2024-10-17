@@ -50,7 +50,7 @@
   
         - name: Test example
           #shell: bash
-          shell: 'C:\\Program Files\\Git\\bin\\bash.exe'
+          shell: 'C:/Program Files/Git/bin/bash.exe'
           env:
             SECRETS_CONTEXT: ${{ toJson(secrets) }}
             VARS_CONTEXT: ${{ toJson(vars) }}
