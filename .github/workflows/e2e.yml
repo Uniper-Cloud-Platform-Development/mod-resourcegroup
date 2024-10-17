@@ -88,8 +88,12 @@
               fi
             done
 
-            # Output environment variables related to TF_VAR_
-            echo -e "Custom environment variables:\n$(env | grep TF_VAR_ | grep -v ' "TF_VAR_')"
+            # Debug environment variables
+            echo "Debugging MSI_ID and ARM_* variables:"
+            echo "MSI_ID: $MSI_ID"
+            echo "ARM_SUBSCRIPTION_ID: $ARM_SUBSCRIPTION_ID"
+            echo "ARM_TENANT_ID: $ARM_TENANT_ID"
+            echo "ARM_CLIENT_ID: $ARM_CLIENT_ID"
 
             # Use az account show instead of logging in again
             export ARM_SUBSCRIPTION_ID=$(az account show --query 'id' -o tsv)
@@ -97,7 +101,23 @@
 
             # Get the ARM_CLIENT_ID using az identity list
             export ARM_CLIENT_ID=$(az identity list --query "[?principalId=='$MSI_ID'].clientId" -o tsv)
-            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /mnt/c/Uniper/azureverifiedmodules/mod-resourcegroup:/src -w /src --network=host -e TF_IN_AUTOMATION -e TF_VAR_enable_telemetry -e AVM_MOD_PATH=/src -e AVM_EXAMPLE=${{ matrix.example }} -e MSI_ID -e ARM_SUBSCRIPTION_ID -e ARM_TENANT_ID -e ARM_CLIENT_ID -e ARM_USE_MSI=true --env-file <(env | grep TF_VAR_ | grep -v ' "TF_VAR_') mcr.microsoft.com/azterraform:latest make test-example
+
+            # Run Docker with modified paths
+            docker run --rm \
+              -v /mnt/c/Uniper/azureverifiedmodules/mod-resourcegroup:/src \ # Ensure this path works for your Docker setup
+              -w /src \
+              --network=host \
+              -e TF_IN_AUTOMATION \
+              -e TF_VAR_enable_telemetry \
+              -e AVM_MOD_PATH=/src \
+              -e AVM_EXAMPLE=complete \
+              -e MSI_ID \
+              -e ARM_SUBSCRIPTION_ID \
+              -e ARM_TENANT_ID \
+              -e ARM_CLIENT_ID \
+              -e ARM_USE_MSI=true \
+              --env-file <(env | grep TF_VAR_ | grep -v ' "TF_VAR_') \
+              mcr.microsoft.com/azterraform:latest make test-example
   
     testexamplescomplete:
       if: github.event.repository.name != 'terraform-azurerm-avm-template'
