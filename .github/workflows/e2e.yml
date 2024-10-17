@@ -63,6 +63,10 @@
               exit 1
             fi
 
+            # Debugging environment variables
+            echo "SECRETS_CONTEXT: $SECRETS_CONTEXT"
+            echo "VARS_CONTEXT: $VARS_CONTEXT"
+
             # Set environment variables from secrets and vars contexts
             declare -A secrets
             eval "$(echo $SECRETS_CONTEXT | jq -r 'to_entries[] | @sh "secrets[\(.key|tostring)]=\(.value|tostring)"')"
@@ -76,6 +80,7 @@
                 lowerKey=$(echo "$key" | tr '[:upper:]' '[:lower:]')
                 finalKey=${lowerKey/tf_var_/TF_VAR_}
                 export "$finalKey"="${secrets[$key]}"
+                echo "Exporting $finalKey from secrets"
               fi
             done
 
@@ -85,6 +90,7 @@
                 lowerKey=$(echo "$key" | tr '[:upper:]' '[:lower:]')
                 finalKey=${lowerKey/tf_var_/TF_VAR_}
                 export "$finalKey"="${variables[$key]}"
+                echo "Exporting $finalKey from variables"
               fi
             done
 
@@ -102,9 +108,19 @@
             # Get the ARM_CLIENT_ID using az identity list
             export ARM_CLIENT_ID=$(az identity list --query "[?principalId=='$MSI_ID'].clientId" -o tsv)
 
-            # Run Docker with modified paths
+            # Additional Debugging: Check if paths are valid
+            echo "Checking paths:"
+            if [ -d /mnt/c/Uniper/azureverifiedmodules/mod-resourcegroup ]; then
+              echo "Path exists: /mnt/c/Uniper/azureverifiedmodules/mod-resourcegroup"
+            else
+              echo "Path does not exist: /mnt/c/Uniper/azureverifiedmodules/mod-resourcegroup"
+            fi
+
+            # Docker Debugging Run
+            echo "Running Docker command..."
+
             docker run --rm \
-              -v /c/Uniper/azureverifiedmodules/mod-resourcegroup:/src \ # Ensure this path works for your Docker setup
+              -v /mnt/c/Uniper/azureverifiedmodules/mod-resourcegroup:/src \
               -w /src \
               --network=host \
               -e TF_IN_AUTOMATION \
