@@ -44,7 +44,7 @@
             echo $PWD
             mkdir dir_folder
             ls
-          shell: C:\Program Files\Git\bin\bash.exe --noprofile --norc -e -o pipefail {0}
+          shell: "C:\\Program Files\\Git\\bin\\bash.exe --noprofile --norc -e -o pipefail {0}"
           env:
             SECRETS_CONTEXT: ${{ toJson(secrets) }}
             VARS_CONTEXT: ${{ toJson(vars) }}
