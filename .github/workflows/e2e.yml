@@ -52,9 +52,8 @@
             msi="0493280d-50ef-46df-b7d0-c698b64046bc"
             echo "MSI ID: $msi"
             az login --identity --username $msi
-            until [ $RETRY_COUNT -ge $MAX_RETRIES ]
-            do                                
-              az login --identity --username $msi > /dev/null && break
+            until [ $RETRY_COUNT -ge $MAX_RETRIES ];do                                
+              az login --identity --username $msi #> /dev/null && break
               RETRY_COUNT=$[$RETRY_COUNT+1]
               sleep 10
             done
