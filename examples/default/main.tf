@@ -40,19 +40,7 @@ resource "random_integer" "region_index" {
 
 module "resource_group" {
   source = "../../"
-  # location = module.regions.regions[random_integer.region_index.result].name
-  # name     = module.naming.resource_group.name_unique
-  location = "westeurope"
-  name     = "rg-weu-poc-plteng-05"
-  tags = {
-    # "hidden-title" = "This is visible in the resource name"
-    # Environment    = "Non-Prod"
-    # Role           = "DeploymentValidation"
-    "application_name"   = "Testing # 1.0"
-    "eam_id"             = "203196"
-    "lob_parent"         = "Information Technology"
-    "owner_email"        = "S49123@uniper.energy"
-    "environment"        = "INT"
-    "notification_email" = "uit-cmc-automation-services@uniper.energy"
-  }
+  name     = "rg-${var.region}-${var.environment}-shared${var.appshortname}-09"
+  location = var.location
+  tags = var.tags
 }
