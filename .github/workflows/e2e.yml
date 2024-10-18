@@ -46,16 +46,20 @@
         #     echo "Running Bash version check via cmd"
         #     "C:/Program Files/Git/bin/bash.exe" --noprofile --norc --version
 
-        - name: Test Git Bash via cmd
-          shell: C:\WINDOWS\system32\cmd.EXE /D /E:ON /V:OFF /S /C "{0}"
+        - name: Create and run script via cmd
+          shell: cmd
           env:
             TF_IN_AUTOMATION: 1
             TF_VAR_enable_telemetry: false
           run: |
-            echo Running Bash version check via cmd
-            "C:/Program Files/Git/bin/bash.exe" --noprofile --norc --version
-            echo Running additional commands in Git Bash
-            "C:/Program Files/Git/bin/bash.exe" -c "ls -la"
+            echo @echo off > run_bash_commands.bat
+            echo echo Running Bash version check via cmd >> run_bash_commands.bat
+            echo "C:/Program Files/Git/bin/bash.exe" --noprofile --norc --version >> run_bash_commands.bat
+            echo echo Running additional commands in Git Bash >> run_bash_commands.bat
+            echo "C:/Program Files/Git/bin/bash.exe" -c "ls -la" >> run_bash_commands.bat
+            echo echo Debugging: printing contents of bat file >> run_bash_commands.bat
+            echo type run_bash_commands.bat >> run_bash_commands.bat
+            call run_bash_commands.bat     
       
 
         #   shell: bash #"C:/Program Files/Git/bin/bash.exe" ## --noprofile --norc -e -o pipefail {0}"
