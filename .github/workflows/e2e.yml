@@ -50,7 +50,7 @@
             VARS_CONTEXT: ${{ toJson(vars) }}
           run: |
             set -e
-            set -o pipefail
+            & 'C:\Program Files\Git\bin\bash.exe' -c "echo 'Running Bash inside PowerShell'"
 
             MAX_RETRIES=10
             RETRY_COUNT=0
