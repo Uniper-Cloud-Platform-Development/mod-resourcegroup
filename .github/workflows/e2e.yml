@@ -88,6 +88,12 @@
             done
   
             echo -e "Custom environment variables:\n$(env | grep TF_VAR_ | grep -v ' "TF_VAR_')"
+
+            # Generate the env_vars.txt file 
+            env | grep TF_VAR_ | grep -v ' "TF_VAR_"' > env_vars.txt
+
+            # Verify the file is created and contains the expected variables
+            cat env_vars.txt
   
             export ARM_SUBSCRIPTION_ID=$(az login --identity --username $MSI_ID | jq -r '.[0] | .id')
             export ARM_TENANT_ID=$(az login --identity --username $MSI_ID | jq -r '.[0] | .tenantId')
