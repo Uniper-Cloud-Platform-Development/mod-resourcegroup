@@ -51,7 +51,7 @@
             RETRY_COUNT=0
             until [ $RETRY_COUNT -ge $MAX_RETRIES ]
             do                                
-              az login --identity > /dev/null && break
+              az login --identity --username 9ddd4602-cb72-4da2-a3c3-ebc6b907d29b --debug > /dev/null && break
               RETRY_COUNT=$[$RETRY_COUNT+1]
               sleep 10
             done
