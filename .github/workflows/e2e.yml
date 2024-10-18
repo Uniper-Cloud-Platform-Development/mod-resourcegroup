@@ -108,10 +108,10 @@
               --env-file <(env | grep TF_VAR_ | grep -v ' "TF_VAR_"') mcr.microsoft.com/azterraform:latest make test-example
             EOF
 
-        - name: Run Git Bash script
-          shell: bash
-          run: |
-            bash run_bash_commands.sh
+        # - name: Run Git Bash script
+        #   shell: bash
+        #   run: |
+        #     bash run_bash_commands.sh
 
 
 
