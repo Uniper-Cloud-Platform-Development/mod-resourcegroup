@@ -41,13 +41,10 @@
         - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 #v4.2.1
         
         - name: Test example
-          shell: "C:/Program Files/Git/bin/bash.exe --noprofile --norc -e -o pipefail"
-          env:
-            TF_IN_AUTOMATION: 1
-            TF_VAR_enable_telemetry: false
+          shell: cmd
           run: |
-            echo "Running Bash version check"
-            bash --version  # Prints the version of Git Bash
+            echo "Running Bash version check via cmd"
+            "C:/Program Files/Git/bin/bash.exe" --noprofile --norc --version
 
         #   shell: bash #"C:/Program Files/Git/bin/bash.exe" ## --noprofile --norc -e -o pipefail {0}"
         #  # env:
