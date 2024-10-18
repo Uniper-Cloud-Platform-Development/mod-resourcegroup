@@ -49,9 +49,10 @@
             set -e
              MAX_RETRIES=10
             RETRY_COUNT=0
+            msi="0493280d-50ef-46df-b7d0-c698b64046bc" 
             until [ $RETRY_COUNT -ge $MAX_RETRIES ]
             do                                
-              az login --identity --username 0493280d-50ef-46df-b7d0-c698b64046bc > /dev/null && break
+              az login --identity --username $msi > /dev/null && break
               RETRY_COUNT=$[$RETRY_COUNT+1]
               sleep 10
             done
